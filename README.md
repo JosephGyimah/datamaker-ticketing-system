@@ -66,6 +66,14 @@ frontend/
 - npm 9+
 - MongoDB (Atlas or local)
 
+### Office Server Laptop Requirements
+
+Install these on the laptop that will host the app locally:
+
+- Node.js 18+ (includes npm and npx)
+- MongoDB Community Server (local instance)
+- Windows Defender Firewall access for ports 3000 and 5000 (Private network)
+
 ### Backend .env
 
 Create backend/.env with:
@@ -83,6 +91,8 @@ Create frontend/.env (optional) with:
 ```
 VITE_API_URL=http://localhost:5000
 ```
+
+For production, set VITE_API_URL to your deployed backend base URL.
 
 ## Running the Application
 
@@ -106,9 +116,78 @@ npm run dev
 
 Frontend runs on http://localhost:3000
 
+## Office LAN Hosting (Single Laptop)
+
+Use this when hosting on one office laptop so other devices on the same Wi-Fi
+or LAN can access the app in a browser.
+
+### Backend (LAN)
+
+1. Ensure MongoDB is running locally on the server laptop.
+2. Set backend/.env:
+
+```
+MONGO_URI=mongodb://127.0.0.1:27017/datamaker_ticketing
+JWT_SECRET=your_secure_jwt_secret
+PORT=5000
+```
+
+3. Start the backend:
+
+```
+cd backend
+npm start
+```
+
+Backend listens on all interfaces and should be reachable at:
+
+http://<server-ip>:5000
+
+### Frontend (Production Build)
+
+1. Set frontend/.env to point at the server laptop IP:
+
+```
+VITE_API_URL=http://<server-ip>:5000
+```
+
+2. Build and serve the static files on port 3000:
+
+```
+cd frontend
+npm run build
+npx serve -s dist -l 3000
+```
+
+Frontend should be reachable at:
+
+http://<server-ip>:3000
+
+### One-Command Startup (Windows)
+
+Use the helper script to start backend, build frontend, and serve the static
+site on port 3000:
+
+```
+./scripts/start-office.ps1
+```
+
+### Firewall Notes (Windows)
+
+If other laptops cannot connect, allow inbound TCP on ports 3000 and 5000:
+
+- Windows Defender Firewall -> Advanced Settings -> Inbound Rules -> New Rule
+- Port -> TCP -> 3000 and 5000 -> Allow the connection -> Private
+
+### Offline Behavior
+
+If the server laptop is offline or asleep, the app is not reachable. Keep the
+server laptop powered on and connected to the office network.
+
 ### Troubleshooting
 
 - “Failed to fetch” typically means the backend is not running on port 5000.
+- MongoDB connection strings must start with mongodb:// or mongodb+srv://
 - If CSV export fails, confirm the user is an Admin and the token is valid.
 - Check backend logs for any “Create ticket error” stack traces.
 
@@ -150,6 +229,30 @@ npm run build
 ```
 
 Serve the frontend build with a static host and point it to the API URL.
+
+## Deployment (Render + Vercel)
+
+### Backend on Render
+
+- Root Directory: backend
+- Build Command: npm install
+- Start Command: npm start
+- Environment Variables:
+  - MONGO_URI
+  - JWT_SECRET
+  - PORT (optional; Render supplies one)
+
+### Frontend on Vercel
+
+- Root Directory: frontend
+- Framework Preset: Vite
+- Build Command: npm run build
+- Output Directory: dist
+- Environment Variables:
+  - VITE_API_URL = https://<your-backend>.onrender.com
+
+Optional (SPA routing on Vercel): add a vercel.json rewrite to route all
+requests to index.html when using client-side routes.
 
 ## QA Verification Summary
 

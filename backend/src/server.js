@@ -60,7 +60,7 @@ const startServer = async () => {
   // Ensure updated index options (e.g., sparse ticket IDs) are applied.
   await Ticket.syncIndexes();
 
-  server.listen(PORT, () => {
+  server.listen(PORT, "0.0.0.0", () => {
     console.log(`\n🚀 Server running on port ${PORT}`);
     console.log(`🔌 Socket.io ready for real-time connections`);
     console.log(`📡 CORS enabled for all origins`);
