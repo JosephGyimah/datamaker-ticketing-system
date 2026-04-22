@@ -133,10 +133,6 @@ This backend is ready for cloud deployment on:
 3. Push to the branch
 4. Create a Pull Request
 
-## License
-
-MIT License - see LICENSE file for details
-
 ## Support
 
 For issues or questions, please create an issue in the repository.
