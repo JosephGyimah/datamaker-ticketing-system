@@ -65,7 +65,7 @@ const startServer = async () => {
     console.warn("Starting backend without an active database connection.");
   }
 
-  server.listen(PORT, () => {
+  server.listen(PORT, "0.0.0.0", () => {
     console.log(`\n🚀 Server running on port ${PORT}`);
     console.log(`🔌 Socket.io ready for real-time connections`);
     console.log(`📡 CORS enabled for all origins`);
