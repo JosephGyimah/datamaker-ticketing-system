@@ -56,9 +56,14 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
-  await connectDB();
-  // Ensure updated index options (e.g., sparse ticket IDs) are applied.
-  await Ticket.syncIndexes();
+  const dbConnection = await connectDB();
+
+  if (dbConnection) {
+    // Ensure updated index options (e.g., sparse ticket IDs) are applied.
+    await Ticket.syncIndexes();
+  } else {
+    console.warn("Starting backend without an active database connection.");
+  }
 
   server.listen(PORT, () => {
     console.log(`\n🚀 Server running on port ${PORT}`);
